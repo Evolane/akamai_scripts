@@ -9,11 +9,16 @@ from datetime import datetime, timezone, timedelta
 import requests
 from akamai.edgegrid import EdgeGridAuth
 from akamaihostnames import get_akamai_hostnames
+from certs import update_tech_contact
+from iam import list_api_client
 
 def main():
-    customer, interval, config, s, baseurl, updown, args, propertyarg = setup()
+    customer, config, s, baseurl, updown, args, propertyarg = setup()
     api_timeout = 50
-    hostnames = get_akamai_hostnames(customer, baseurl, s, api_timeout)
+    #hostnames = get_akamai_hostnames(customer, baseurl, s, api_timeout)
+    clientid = list_api_client(baseurl, s)
+    temp = update_tech_contact(customer, s, baseurl)
+
 
 
 
@@ -43,7 +48,6 @@ def setup():
     global args
     args = parse_args()
     customer = args.customer
-    interval = args.interval
     propertyarg = args.property
     config = parse_config(args.configfile)
     s = requests.Session()
@@ -54,7 +58,7 @@ def setup():
         client_secret=config[customer]["client_secret"],
         access_token=config[customer]["access_token"]
     )
-    return customer, interval, config, s, baseurl, updown, args, propertyarg
+    return customer, config, s, baseurl, updown, args, propertyarg
 
 
 
